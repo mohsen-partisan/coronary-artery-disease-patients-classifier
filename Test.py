@@ -18,7 +18,13 @@ headers = list(data)
 data = data.replace(r'^\s*$', np.nan, regex=True)
 data = data.replace('.', np.nan)
 s=data['MACE'].value_counts()
-miss = data['MACE'].isnull().sum()
+miss = data['CathLabDataCathLabDataStentThrombosis'].isnull().sum()
+nanColumns = data.columns[data.isnull().any()].tolist()
+dict = {}
+for i in range(0, data.shape[1]):
+    sum = data[data.columns[i]].isnull().sum()
+    if sum > 0:
+        dict[data.columns[i]] = sum
 
 # encode categorical values
 # le = preprocessing.LabelEncoder()
