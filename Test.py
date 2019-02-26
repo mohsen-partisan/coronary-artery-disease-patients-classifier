@@ -56,13 +56,22 @@ data = data.replace({'CathLabDataCathLabDataStentThrombosis':np.nan, 'MACE':np.n
                      'OtherDataResultsresult':np.nan}, 'Unknown')
 
 int_timi_nan = data['CathLabDataCathLabDataInitialTIMI'].isnull()
+fin_timi_nan = data['CathLabDataCathLabDataFinalTIMI'].isnull()
 count = 0
 sum_timi = 0
-for i in range(0, data.shape[0]):
-    if not int_timi_nan[i]:
-      sum_timi += int(data.iloc[i]['CathLabDataCathLabDataFinalTIMI']) - int(data.iloc[i]['CathLabDataCathLabDataInitialTIMI'])
+a = 0
+b = 0
+for i in range(0, (data.shape[0]-1)):
+    if not int_timi_nan[i] and not fin_timi_nan[i]:
+      a = int(data.iloc[i]['CathLabDataCathLabDataFinalTIMI'])
+      b = int(data.iloc[i]['CathLabDataCathLabDataInitialTIMI'])
+      sum_timi += a - b
       count+=1
-avg = sum / count
+avg = sum_timi / count
+inti_timi_imputer = SimpleImputer(strategy='most_frequent')
+data['CathLabDataCathLabDataInitialTIMI'] = inti_timi_imputer.fit_transform(data[['CathLabDataCathLabDataInitialTIMI']])
+data = data.replace({'CathLabDataCathLabDataFinalTIMI':np.nan}, avg)
+data['target'] = np.nan
 # for i in range(0, data.shape[0]):
 # if data[data.columns[0]]
 # encode categorical values
