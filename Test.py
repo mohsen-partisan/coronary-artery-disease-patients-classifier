@@ -2,7 +2,7 @@
 import pandas as pd
 from sklearn.impute import SimpleImputer
 import numpy as np
-
+from jdatetime import date
 filename = '/home/mohsen/Desktop/primaryPCI.csv'
 data = pd.read_csv(filename, sep=';')
 data = data[data.columns[0:64]]
@@ -61,7 +61,7 @@ count = 0
 sum_timi = 0
 a = 0
 b = 0
-for i in range(0, (data.shape[0]-1)):
+for i in range(0, (data.shape[0])):
     if not int_timi_nan[i] and not fin_timi_nan[i]:
       a = int(data.iloc[i]['CathLabDataCathLabDataFinalTIMI'])
       b = int(data.iloc[i]['CathLabDataCathLabDataInitialTIMI'])
@@ -72,6 +72,21 @@ inti_timi_imputer = SimpleImputer(strategy='most_frequent')
 data['CathLabDataCathLabDataInitialTIMI'] = inti_timi_imputer.fit_transform(data[['CathLabDataCathLabDataInitialTIMI']])
 data = data.replace({'CathLabDataCathLabDataFinalTIMI':np.nan}, avg)
 data['target'] = np.nan
+
+
+def split_date(date):
+    return date.split('/')
+in_date = 0
+out_date = 0
+for i in range(0, (data.shape[0])):
+    in_date = data.iloc[i]['AdmissionPainOnsetDate']
+    out_date = data.iloc[i]['DemographicsDemographicsDateofDischarge']
+    splitted_in_date = split_date(in_date)
+    splitted_out_date = split_date(out_date)
+    d1 = date(int(splitted_in_date[0]), int(splitted_in_date[1]), int(splitted_in_date[2]))
+    d2 = date(int(splitted_out_date[0]), int(splitted_out_date[1]), int(splitted_out_date[2]))
+    data.loc[i, 'target'] = (d2 - d1).days
+
 # for i in range(0, data.shape[0]):
 # if data[data.columns[0]]
 # encode categorical values
