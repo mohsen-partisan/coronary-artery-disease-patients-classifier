@@ -1,6 +1,7 @@
 
 import pandas as pd
 from sklearn.impute import SimpleImputer
+import sklearn.preprocessing as preprocessing
 import numpy as np
 from jdatetime import date
 filename = '/home/mohsen/Desktop/primaryPCI.csv'
@@ -86,6 +87,11 @@ for i in range(0, (data.shape[0])):
     d1 = date(int(splitted_in_date[0]), int(splitted_in_date[1]), int(splitted_in_date[2]))
     d2 = date(int(splitted_out_date[0]), int(splitted_out_date[1]), int(splitted_out_date[2]))
     data.loc[i, 'target'] = (d2 - d1).days
+
+long = data[data.target > 10]
+types = data.dtypes
+data = data.drop(['AdmissionPainOnsetDate', 'DemographicsDemographicsDateofDischarge'], axis=1)
+data = pd.get_dummies(data, prefix_sep='_')
 
 # for i in range(0, data.shape[0]):
 # if data[data.columns[0]]
