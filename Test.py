@@ -4,7 +4,7 @@ from sklearn.impute import SimpleImputer
 import sklearn.preprocessing as preprocessing
 import numpy as np
 from jdatetime import date
-filename = '/home/mohsen/Desktop/primaryPCI.csv'
+filename = '/home/mohsen/payanname/resources/modifiedDatePrimaryPCI.csv'
 data = pd.read_csv(filename, sep=';')
 data = data[data.columns[0:64]]
 data = data.drop(['Patientid', 'encounterid', 'AdmissionAdmissionProfileNumber',
