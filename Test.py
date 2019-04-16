@@ -92,6 +92,11 @@ long = data[data.target > 10]
 types = data.dtypes
 data = data.drop(['AdmissionPainOnsetDate', 'DemographicsDemographicsDateofDischarge'], axis=1)
 data = pd.get_dummies(data, prefix_sep='_')
+print(data.shape)
+
+def getData():
+    return data
+
 
 # for i in range(0, data.shape[0]):
 # if data[data.columns[0]]
