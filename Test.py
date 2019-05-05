@@ -90,19 +90,38 @@ for i in range(0, (data.shape[0])):
 
 long = data[data.target > 10]
 types = data.dtypes
-data = data.drop(['AdmissionPainOnsetDate', 'DemographicsDemographicsDateofDischarge'], axis=1)
-data = pd.get_dummies(data, prefix_sep='_')
+data = data.drop(['AdmissionPainOnsetDate', 'DemographicsDemographicsDateofDischarge', 'OtherDataResultsresult'], axis=1)
+convert_dict = {'CathLabDataCathLabDataInitialTIMI': 'int64',
+                'CathLabDataCathLabDataFinalTIMI':'int64'}
+data = data.astype(convert_dict)
+dtype = data.dtypes
+# data = pd.get_dummies(data, prefix_sep='_')
+
+# # Categorical boolean mask
+# categorical_feature_mask = data.dtypes==object
+# # filter categorical columns using mask and turn it into a list
+# categorical_cols = data.columns[categorical_feature_mask].tolist()
+# # instantiate labelencoder object
+# le = preprocessing.LabelEncoder()
+# # apply le on categorical feature columns
+# data[categorical_cols] = data[categorical_cols].apply(lambda col: le.fit_transform(col))
+
+le = preprocessing.LabelEncoder()
+for i in range(0, data.shape[1]):
+    if data.dtypes[i]=='object':
+        data[data.columns[i]] = le.fit_transform(data[data.columns[i]])
+data.loc[data['target'] < 4, 'target'] = 1
+data.loc[data['target'] >= 4, 'target'] = 2
+# move target to last column
+data = data[[c for c in data if c not in ['target']] + ['target']]
 print(data.shape)
+headers2 = list(data)
+last_numerical_index = data.columns.get_loc("Age_On_Admission")
 
 def getData():
     return data
 
 
-# for i in range(0, data.shape[0]):
-# if data[data.columns[0]]
-# encode categorical values
-# le = preprocessing.LabelEncoder()
-# for i in range(0,data.shape[1]):
-#     if data.dtypes[i]=='object':
-#         data[data.columns[i]] = le.fit_transform(data[data.columns[i]])
+
+
 print("ha")
