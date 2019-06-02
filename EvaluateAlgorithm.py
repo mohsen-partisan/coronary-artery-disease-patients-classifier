@@ -20,11 +20,13 @@ from xgboost import XGBClassifier
 from xgboost import plot_importance
 from matplotlib import pyplot
 import numpy
+from Util import Util
 
 class EvalutionAlgorithm:
 
     def __init__(self):
         self.data = getData()
+        self.final_headers = []
 
     def split_out_train_test(self):
         array = self.standardize()
@@ -44,7 +46,9 @@ class EvalutionAlgorithm:
         self.data.insert(2, 'Age_On_Admission', age_column)
         self.data.insert(3, 'D41stLesionPCITreatedwithStentStentdiameter', x)
         self.data.insert(4, 'D41stLesionPCITreatedwithStentStentlenght', y)
+        self.final_headers = list(self.data)
         array = self.data.values
+
         # standardize continious columns
         scaler = StandardScaler().fit(array[:, 0:5])
         array[:, 0:5] = scaler.transform(array[:, 0:5])
@@ -74,17 +78,17 @@ estimators.append(('cart', DecisionTreeClassifier()))
 estimators.append(('svm', SVC()))
 estimators.append(('logistic', LogisticRegression()))
 voting = VotingClassifier(estimators)
-models.append(( ' LR ' , LogisticRegression()))
-models.append(( ' LDA ' , LinearDiscriminantAnalysis()))
-models.append(( ' KNN ' , KNeighborsClassifier()))
-models.append(( ' CART ' , DecisionTreeClassifier()))
-models.append(( ' NB ' , GaussianNB()))
-models.append(( ' SVM ' , SVC()))
-models.append(( ' BC ' , baggingClassifier))
-models.append(( ' RF ' , randomForest))
-models.append(( ' ADA ' , adaBoost))
-models.append(( ' GB' , gradientBoosting))
-models.append(( ' Voting' , voting))
+# models.append(( ' LR ' , LogisticRegression()))
+# models.append(( ' LDA ' , LinearDiscriminantAnalysis()))
+# models.append(( ' KNN ' , KNeighborsClassifier()))
+# models.append(( ' CART ' , DecisionTreeClassifier()))
+# models.append(( ' NB ' , GaussianNB()))
+# models.append(( ' SVM ' , SVC()))
+# models.append(( ' BC ' , baggingClassifier))
+# models.append(( ' RF ' , randomForest))
+# models.append(( ' ADA ' , adaBoost))
+# models.append(( ' GB' , gradientBoosting))
+# models.append(( ' Voting' , voting))
 # models.append(( ' xgboost' , XGBClassifier()))
 results = []
 names = []
@@ -105,8 +109,13 @@ xmodel = XGBClassifier()
 xmodel.fit(features, target)
 # plot_importance(xmodel)
 pyplot.bar(range(len(xmodel.feature_importances_)), xmodel.feature_importances_)
+pyplot.xticks(numpy.arange(47), numpy.arange(47))
 pyplot.show()
 print(xmodel.feature_importances_)
+util = Util()
+features_list = list(xmodel.feature_importances_)
+selected_features = util.selected_features(features_list)
+print(selected_features)
 
 
 

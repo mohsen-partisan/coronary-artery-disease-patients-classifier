@@ -110,8 +110,8 @@ le = preprocessing.LabelEncoder()
 for i in range(0, data.shape[1]):
     if data.dtypes[i]=='object':
         data[data.columns[i]] = le.fit_transform(data[data.columns[i]])
-data.loc[data['target'] < 4, 'target'] = 1
-data.loc[data['target'] >= 4, 'target'] = 2
+data.loc[data['target'] < 6, 'target'] = 1
+data.loc[data['target'] >= 6, 'target'] = 2
 # move target to last column
 data = data[[c for c in data if c not in ['target']] + ['target']]
 print(data.shape)
