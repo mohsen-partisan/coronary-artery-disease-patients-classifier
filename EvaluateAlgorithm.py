@@ -19,6 +19,7 @@ from sklearn.preprocessing import StandardScaler
 from xgboost import XGBClassifier
 from xgboost import plot_importance
 from matplotlib import pyplot
+from FeatureSelection import FeatureSelection
 import numpy
 from Util import Util
 
@@ -29,10 +30,11 @@ class EvalutionAlgorithm:
         self.final_headers = []
 
     def split_out_train_test(self):
-        array = self.standardize()
-        # array = self.data.values
-        features = array[:, 0:47]
-        target = array[:, 47]
+        standardized_array = self.standardize()
+        # extract target from array
+        target = standardized_array[:, (standardized_array.shape[1] - 1)]
+        # extract selected features
+        features = self.select_features()
         validation_size = 0.20
         seed = 7
         return train_test_split(features, target, test_size=validation_size, random_state=seed)
@@ -55,9 +57,19 @@ class EvalutionAlgorithm:
 
         return array
 
+    # feature selection
+    def select_features(self):
+        feature_selection = FeatureSelection()
+        selected_features = feature_selection.selected_features_by_xgboost(evaluate.standardize())
+        util = Util()
+        selected_features_index = util.selected_features(selected_features)
+        selected_data = evaluate.data.ix[:, selected_features_index]
+        return selected_data.values
 
-split = EvalutionAlgorithm()
-features_train, features_test, target_train, target_test = split.split_out_train_test()
+
+evaluate = EvalutionAlgorithm()
+features_train, features_test, target_train, target_test = evaluate.split_out_train_test()
+
 
 
 num_folds = 10
@@ -78,18 +90,18 @@ estimators.append(('cart', DecisionTreeClassifier()))
 estimators.append(('svm', SVC()))
 estimators.append(('logistic', LogisticRegression()))
 voting = VotingClassifier(estimators)
-# models.append(( ' LR ' , LogisticRegression()))
-# models.append(( ' LDA ' , LinearDiscriminantAnalysis()))
-# models.append(( ' KNN ' , KNeighborsClassifier()))
-# models.append(( ' CART ' , DecisionTreeClassifier()))
-# models.append(( ' NB ' , GaussianNB()))
-# models.append(( ' SVM ' , SVC()))
-# models.append(( ' BC ' , baggingClassifier))
-# models.append(( ' RF ' , randomForest))
-# models.append(( ' ADA ' , adaBoost))
-# models.append(( ' GB' , gradientBoosting))
-# models.append(( ' Voting' , voting))
-# models.append(( ' xgboost' , XGBClassifier()))
+models.append(( ' LR ' , LogisticRegression()))
+models.append(( ' LDA ' , LinearDiscriminantAnalysis()))
+models.append(( ' KNN ' , KNeighborsClassifier()))
+models.append(( ' CART ' , DecisionTreeClassifier()))
+models.append(( ' NB ' , GaussianNB()))
+models.append(( ' SVM ' , SVC()))
+models.append(( ' BC ' , baggingClassifier))
+models.append(( ' RF ' , randomForest))
+models.append(( ' ADA ' , adaBoost))
+models.append(( ' GB' , gradientBoosting))
+models.append(( ' Voting' , voting))
+models.append(( ' xgboost' , XGBClassifier()))
 results = []
 names = []
 for name, model in models:
@@ -100,22 +112,18 @@ for name, model in models:
     msg = "%s: %f (%f)" % (name, cv_results.mean(), cv_results.std())
     print(msg)
 
-evaluate = EvalutionAlgorithm()
+# evaluate = EvalutionAlgorithm()
 array = evaluate.standardize()
-# array = self.data.values
 features = array[:, 0:47]
 target = array[:, 47]
 xmodel = XGBClassifier()
 xmodel.fit(features, target)
-# plot_importance(xmodel)
-pyplot.bar(range(len(xmodel.feature_importances_)), xmodel.feature_importances_)
-pyplot.xticks(numpy.arange(47), numpy.arange(47))
-pyplot.show()
-print(xmodel.feature_importances_)
-util = Util()
-features_list = list(xmodel.feature_importances_)
-selected_features = util.selected_features(features_list)
-print(selected_features)
+# # plot_importance(xmodel)
+# pyplot.bar(range(len(xmodel.feature_importances_)), xmodel.feature_importances_)
+# pyplot.xticks(numpy.arange(47), numpy.arange(47))
+# pyplot.show()
+# print(xmodel.feature_importances_)
+
 
 
 
