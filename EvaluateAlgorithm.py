@@ -73,7 +73,7 @@ features_train, features_test, target_train, target_test = evaluate.split_out_tr
 
 
 num_folds = 10
-seed = 7
+seed = 12
 scoring = 'accuracy'
 models = []
 num_trees = 200
