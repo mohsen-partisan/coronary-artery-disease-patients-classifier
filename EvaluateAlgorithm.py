@@ -1,4 +1,4 @@
-from Test import getData
+from DataHandler import getData
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import KFold
 from sklearn.model_selection import cross_val_score
