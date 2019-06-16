@@ -15,13 +15,13 @@ from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.ensemble import VotingClassifier
 from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.preprocessing import StandardScaler
 from xgboost import XGBClassifier
 from xgboost import plot_importance
 from matplotlib import pyplot
 from FeatureSelection import FeatureSelection
 import numpy
 from Util import Util
+from DataPreprocessor import DataPreprocessor
 
 class EvalutionAlgorithm:
 
@@ -29,46 +29,9 @@ class EvalutionAlgorithm:
         self.data = getData()
         self.final_headers = []
 
-    def split_out_train_test(self):
-        standardized_array = self.standardize()
-        # extract target from array
-        target = standardized_array[:, (standardized_array.shape[1] - 1)]
-        # extract selected features
-        features = self.select_features()
-        validation_size = 0.20
-        seed = 7
-        return train_test_split(features, target, test_size=validation_size, random_state=seed)
-
-
-    def standardize(self):
-        # move age column position next to another continious columns
-        age_column = self.data.pop('Age_On_Admission')
-        x = self.data.pop('D41stLesionPCITreatedwithStentStentdiameter')
-        y = self.data.pop('D41stLesionPCITreatedwithStentStentlenght')
-        self.data.insert(2, 'Age_On_Admission', age_column)
-        self.data.insert(3, 'D41stLesionPCITreatedwithStentStentdiameter', x)
-        self.data.insert(4, 'D41stLesionPCITreatedwithStentStentlenght', y)
-        self.final_headers = list(self.data)
-        array = self.data.values
-
-        # standardize continious columns
-        scaler = StandardScaler().fit(array[:, 0:5])
-        array[:, 0:5] = scaler.transform(array[:, 0:5])
-
-        return array
-
-    # feature selection
-    def select_features(self):
-        feature_selection = FeatureSelection()
-        selected_features = feature_selection.selected_features_by_xgboost(evaluate.standardize())
-        util = Util()
-        selected_features_index = util.selected_features(selected_features)
-        selected_data = evaluate.data.ix[:, selected_features_index]
-        return selected_data.values
-
 
 evaluate = EvalutionAlgorithm()
-features_train, features_test, target_train, target_test = evaluate.split_out_train_test()
+features_train, features_test, target_train, target_test = DataPreprocessor().split_out_train_test()
 
 
 
@@ -113,7 +76,7 @@ for name, model in models:
     print(msg)
 
 # evaluate = EvalutionAlgorithm()
-array = evaluate.standardize()
+array = DataPreprocessor().standardize()
 features = array[:, 0:47]
 target = array[:, 47]
 xmodel = XGBClassifier()
