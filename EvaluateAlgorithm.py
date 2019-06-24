@@ -16,6 +16,9 @@ from sklearn.ensemble import VotingClassifier
 from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
 from xgboost import XGBClassifier
+from sklearn.metrics import classification_report
+from sklearn.metrics import confusion_matrix
+from sklearn.metrics import accuracy_score
 from xgboost import plot_importance
 from matplotlib import pyplot
 from FeatureSelection import FeatureSelection
@@ -88,6 +91,14 @@ xmodel.fit(features, target)
 # print(xmodel.feature_importances_)
 
 
+
+
+logistic_regression = LogisticRegression()
+logistic_regression.fit(features_train, target_train)
+predictions = logistic_regression.predict(features_test)
+print(accuracy_score(target_test, predictions))
+print(confusion_matrix(target_test, predictions))
+print(classification_report(target_test, predictions))
 
 
 a = 1
