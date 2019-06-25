@@ -16,6 +16,7 @@ from sklearn.ensemble import VotingClassifier
 from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
 from xgboost import XGBClassifier
+from sklearn.neural_network import MLPClassifier
 from sklearn.metrics import classification_report
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import accuracy_score
@@ -68,6 +69,7 @@ models.append(( ' ADA ' , adaBoost))
 models.append(( ' GB' , gradientBoosting))
 models.append(( ' Voting' , voting))
 models.append(( ' xgboost' , XGBClassifier()))
+models.append(( ' mlp' , MLPClassifier()))
 results = []
 names = []
 for name, model in models:
@@ -93,11 +95,11 @@ xmodel.fit(features, target)
 
 
 
-logistic_regression = LogisticRegression()
+logistic_regression = voting
 logistic_regression.fit(features_train, target_train)
 predictions = logistic_regression.predict(features_test)
-print(accuracy_score(target_test, predictions))
-print(confusion_matrix(target_test, predictions))
+print( accuracy_score(target_test, predictions))
+print(confusion_matrix(target_test, predictions, labels=[1, 2]))
 print(classification_report(target_test, predictions))
 
 
