@@ -5,12 +5,12 @@ import sklearn.preprocessing as preprocessing
 
 class Util:
 
-     def selected_features(self, data):
+     def selected_features_for_xgboost(self, features):
         non_zero = []
         i=0
-        for item in data:
+        for item in features:
             if item !=0:
-                non_zero.append(data.index(item))
+                non_zero.append(features.index(item))
                 i = i+1
         return non_zero
 

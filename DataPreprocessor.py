@@ -41,7 +41,13 @@ class DataPreprocessor:
     # feature selection
     def select_features(self):
         feature_selection = FeatureSelection()
+
+        # select features using xgboost
         selected_features = feature_selection.selected_features_by_xgboost(self.standardize())
-        selected_features_index = Util().selected_features(selected_features)
-        selected_data = self.data.ix[:, selected_features_index]
-        return selected_data.values
+        selected_features_index = Util().selected_features_for_xgboost(selected_features)
+        selected_features_by_xgboost = self.data.ix[:, selected_features_index]
+        return selected_features_by_xgboost
+
+        # select features using selectKBest
+        # selected_features_by_kbest = feature_selection.selected_features_by_selectKBest(self.data.values)
+        # return selected_features_by_kbest
