@@ -1,10 +1,12 @@
 from DataHandler import getData
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import KFold
+from sklearn.model_selection import StratifiedKFold
 from sklearn.model_selection import cross_val_score
-from sklearn.metrics import accuracy_score
+from sklearn.model_selection import cross_val_predict
 from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import make_scorer
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.naive_bayes import GaussianNB
@@ -17,7 +19,6 @@ from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
 from xgboost import XGBClassifier
 from sklearn.neural_network import MLPClassifier
-from sklearn.metrics import classification_report
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import accuracy_score
 from xgboost import plot_importance
@@ -32,12 +33,6 @@ class EvalutionAlgorithm:
     def __init__(self):
         self.data = getData()
         self.final_headers = []
-
-
-evaluate = EvalutionAlgorithm()
-features_train, features_test, target_train, target_test = DataPreprocessor().split_out_train_test()
-
-
 
 num_folds = 10
 seed = 12
@@ -72,35 +67,16 @@ models.append(( ' xgboost' , XGBClassifier()))
 models.append(( ' mlp' , MLPClassifier()))
 results = []
 names = []
+features = DataPreprocessor().select_features()
+standardized_array = DataPreprocessor().standardize()
+target=standardized_array[:, (standardized_array.shape[1] - 1)]
 for name, model in models:
-    kfold = KFold(n_splits=num_folds, random_state=seed)
-    cv_results = cross_val_score(model, features_train, target_train, cv=kfold, scoring=scoring)
+    kfold = StratifiedKFold(n_splits=num_folds, random_state=seed)
+    cv_results = cross_val_score(model, features, target, cv=kfold, scoring=make_scorer(Util.classification_report_with_accuracy_score))
     results.append(cv_results)
     names.append(name)
     msg = "%s: %f (%f)" % (name, cv_results.mean(), cv_results.std())
     print(msg)
-
-# evaluate = EvalutionAlgorithm()
-array = DataPreprocessor().standardize()
-features = array[:, 0:47]
-target = array[:, 47]
-xmodel = XGBClassifier()
-xmodel.fit(features, target)
-# # plot_importance(xmodel)
-# pyplot.bar(range(len(xmodel.feature_importances_)), xmodel.feature_importances_)
-# pyplot.xticks(numpy.arange(47), numpy.arange(47))
-# pyplot.show()
-# print(xmodel.feature_importances_)
-
-
-
-
-logistic_regression = voting
-logistic_regression.fit(features_train, target_train)
-predictions = logistic_regression.predict(features_test)
-print( accuracy_score(target_test, predictions))
-print(confusion_matrix(target_test, predictions, labels=[1, 2]))
-print(classification_report(target_test, predictions))
 
 
 a = 1

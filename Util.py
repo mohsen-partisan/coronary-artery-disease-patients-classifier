@@ -2,7 +2,7 @@
 import pandas as pd
 from jdatetime import date
 import sklearn.preprocessing as preprocessing
-
+from sklearn.metrics import classification_report, accuracy_score, make_scorer, confusion_matrix
 class Util:
 
      def selected_features_for_xgboost(self, features):
@@ -38,3 +38,9 @@ class Util:
                  data[data.columns[i]] = label_encoder.fit_transform(data[data.columns[i]])
 
          return data
+
+     def classification_report_with_accuracy_score(target_test, predictions):
+         print(classification_report(target_test, predictions))  # print classification report
+         print(confusion_matrix(target_test, predictions, labels=[0, 1]))
+         print(accuracy_score(target_test, predictions))
+         return accuracy_score(target_test, predictions)  # return accuracy score

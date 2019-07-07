@@ -74,9 +74,8 @@ data = data.drop(['AdmissionPainOnsetDate', 'DemographicsDemographicsDateofDisch
 # one method to encode categorical values
 data = Util().categorical_encoder(data)
 # creating two classes in target according to problem requirement
-data.loc[data['target'] < 6, 'target'] = 1
-data.loc[data['target'] >= 6, 'target'] = 2
-
+data.loc[data['target'] < 6, 'target'] = 0
+data.loc[data['target'] >= 6, 'target'] = 1
 # move target to last column
 data = data[[c for c in data if c not in ['target']] + ['target']]
 
