@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 from MissValueHandler import MissValueHandler
 from Util import Util
-filename = '/home/mohsen/PycharmProjects/payanname/resources/modifiedDatePrimaryPCI.csv'
+filename = '/home/mohsen/payanname/resources/modifiedDatePrimaryPCI.csv'
 data = pd.read_csv(filename, sep=';')
 # just needed columns
 data = data[data.columns[0:64]]

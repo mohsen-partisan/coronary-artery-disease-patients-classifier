@@ -34,11 +34,25 @@ class EvaluationAlgorithm:
         features_with_target.target.value_counts()
         major = features_with_target[features_with_target.target == 0]
         minor = features_with_target[features_with_target.target == 1]
-        major_downsampled = resample(minor,
+        minor_upsampled = resample(minor,
                                      replace=True,  # sample with replacement
                                      n_samples=len(major),  # match number in majority class
                                      random_state=27)
-        downsampled = pd.concat([major_downsampled, major])
+        upsampled = pd.concat([minor_upsampled, major])
+        upsampled.target.value_counts()
+        return upsampled
+
+
+    def down_sample(self):
+        features_with_target = pd.concat([features, EvaluationAlgorithm().data['target']], axis=1)
+        features_with_target.target.value_counts()
+        major = features_with_target[features_with_target.target == 0]
+        minor = features_with_target[features_with_target.target == 1]
+        major_downsampled = resample(major,
+                                     replace=True,  # sample with replacement
+                                     n_samples=len(minor),  # match number in majority class
+                                     random_state=27)
+        downsampled = pd.concat([major_downsampled, minor])
         downsampled.target.value_counts()
         return downsampled
 
@@ -75,19 +89,26 @@ models.append(( ' RF ' , randomForest))
 # models.append(( ' mlp' , MLPClassifier()))
 results = []
 names = []
+
+# complete data
 features = DataPreprocessor().select_features()
+standardized_array = DataPreprocessor().standardize()
+target=standardized_array[:, (standardized_array.shape[1] - 1)]
 
 
+# down sample
+# downsampled = EvaluationAlgorithm().down_sample()
+# target=downsampled.target
+# downsampled = downsampled.drop(['target'], axis=1)
 
-
-# standardized_array = DataPreprocessor().standardize()
-downsampled = EvaluationAlgorithm().up_sample()
-target=downsampled.target
-downsampled = downsampled.drop(['target'], axis=1)
+# up sample
+# upsampled = EvaluationAlgorithm().up_sample()
+# target=upsampled.target
+# upsampled = upsampled.drop(['target'], axis=1)
 
 for name, model in models:
     kfold = StratifiedKFold(n_splits=num_folds, random_state=seed)
-    cv_results = cross_val_score(model, downsampled, target, cv=kfold, scoring=make_scorer(Util.classification_report_with_accuracy_score))
+    cv_results = cross_val_score(model, features, target, cv=kfold, scoring=make_scorer(Util.classification_report_with_accuracy_score))
     results.append(cv_results)
     names.append(name)
     msg = "%s: %f (%f)" % (name, cv_results.mean(), cv_results.std())
