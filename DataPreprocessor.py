@@ -3,6 +3,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from FeatureSelection import FeatureSelection
 from Util import Util
+import pandas as pd
 from DataHandler import getData
 
 class DataPreprocessor:
@@ -46,7 +47,8 @@ class DataPreprocessor:
         selected_features = feature_selection.selected_features_by_xgboost(self.standardize())
         selected_features_index = Util().selected_features_for_xgboost(selected_features)
         selected_features_by_xgboost = self.data.ix[:, selected_features_index]
-        return selected_features_by_xgboost
+        features_with_target = pd.concat([selected_features_by_xgboost, self.data['target']], axis=1)
+        return features_with_target
 
         # select features using selectKBest
         # selected_features_by_kbest = feature_selection.selected_features_by_selectKBest(self.data.values)

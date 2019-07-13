@@ -8,7 +8,10 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.ensemble import VotingClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import make_scorer
+from sklearn.metrics import classification_report
+from sklearn.metrics import confusion_matrix
 from sklearn.model_selection import StratifiedKFold
+from sklearn.model_selection import KFold
 from sklearn.model_selection import cross_val_score
 from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import KNeighborsClassifier
@@ -29,11 +32,9 @@ class EvaluationAlgorithm:
         self.data = getData()
         self.final_headers = []
 
-    def up_sample(self):
-        features_with_target = pd.concat([features, EvaluationAlgorithm().data['target']], axis=1)
-        features_with_target.target.value_counts()
-        major = features_with_target[features_with_target.target == 0]
-        minor = features_with_target[features_with_target.target == 1]
+    def up_sampling_with_repeating(self, data):
+        major = data[data.target == 0]
+        minor = data[data.target == 1]
         minor_upsampled = resample(minor,
                                      replace=True,  # sample with replacement
                                      n_samples=len(major),  # match number in majority class
@@ -41,6 +42,25 @@ class EvaluationAlgorithm:
         upsampled = pd.concat([minor_upsampled, major])
         upsampled.target.value_counts()
         return upsampled
+
+    def cross_validation_with_up_sampling(self, features):
+        for train_index, test_index in kfold.split(features, features.target, None):
+            # print("%s %s" % (train_index, test_index))
+            test = features.iloc[test_index]
+            target_test = test.target
+            test = test.drop(['target'], axis=1)
+            train = features.iloc[train_index]
+            upsampled_train = EvaluationAlgorithm().up_sampling_with_repeating(train)
+            target_train = upsampled_train.target
+            upsampled_train = upsampled_train.drop(['target'], axis=1)
+            model.fit(upsampled_train, target_train)
+            result = model.score(test, target_test)
+            predicted = model.predict(test)
+            report = classification_report(target_test, predicted)
+            matrix = confusion_matrix(target_test, predicted)
+            print(("Accuracy: %.3f%%") % (result * 100.0))
+            print(report)
+            print(matrix)
 
 
     def down_sample(self):
@@ -92,35 +112,10 @@ names = []
 
 # complete data
 features = DataPreprocessor().select_features()
-standardized_array = DataPreprocessor().standardize()
-target=standardized_array[:, (standardized_array.shape[1] - 1)]
-
-
-# down sample
-# downsampled = EvaluationAlgorithm().down_sample()
-# target=downsampled.target
-# downsampled = downsampled.drop(['target'], axis=1)
-
-# up sample
-# upsampled = EvaluationAlgorithm().up_sample()
-# target=upsampled.target
-# upsampled = upsampled.drop(['target'], axis=1)
 
 for name, model in models:
-    kfold = StratifiedKFold(n_splits=num_folds, random_state=seed)
-    cv_results = cross_val_score(model, features, target, cv=kfold, scoring=make_scorer(Util.classification_report_with_accuracy_score))
-    results.append(cv_results)
-    names.append(name)
-    msg = "%s: %f (%f)" % (name, cv_results.mean(), cv_results.std())
-    print(msg)
-
-# Compare Algorithms
-fig = pyplot.figure()
-fig.suptitle( ' Ensemble Algorithm Comparison ' )
-ax = fig.add_subplot(111)
-pyplot.boxplot(results)
-ax.set_xticklabels(names)
-pyplot.show()
+    kfold = StratifiedKFold(n_splits=num_folds, random_state=seed, shuffle=True)
+    EvaluationAlgorithm().cross_validation_with_up_sampling(features)
 
 
 
