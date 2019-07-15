@@ -1,5 +1,6 @@
 import pandas as pd
 from matplotlib import pyplot
+from imblearn.over_sampling import SMOTE
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.ensemble import AdaBoostClassifier
 from sklearn.ensemble import BaggingClassifier
@@ -33,9 +34,9 @@ class EvaluationAlgorithm:
         self.data = getData()
         self.final_headers = []
 
-    def up_sampling_with_repeating(self, data):
-        major = data[data.target == 0]
-        minor = data[data.target == 1]
+    def up_sampling_with_repeating(self, data_train):
+        major = data_train[data_train.target == 0]
+        minor = data_train[data_train.target == 1]
         minor_upsampled = resample(minor,
                                      replace=True,  # sample with replacement
                                      n_samples=len(major),  # match number in majority class
@@ -43,6 +44,14 @@ class EvaluationAlgorithm:
         upsampled = pd.concat([minor_upsampled, major])
         upsampled.target.value_counts()
         return upsampled
+
+    def up_sampling_with_SMOTE(self, data_train):
+        target_train = data_train.target
+        data_train = data_train.drop(['target'], axis=1)
+        sm = SMOTE(random_state=27, ratio=1.0)
+        data_train, target_train = sm.fit_sample(data_train, target_train)
+        x = pd.concat([pd.DataFrame(data_train), pd.Series(target_train).to_frame().T])
+        return x
 
     def cross_validation(self, features):
         for train_index, test_index in kfold.split(features, features.target, None):
@@ -52,10 +61,12 @@ class EvaluationAlgorithm:
             train = features.iloc[train_index]
             # self.train_model(train)
 
-            upsampled_train = self.up_sampling_with_repeating(train)
-            self.train_model(upsampled_train)
+            # upsampled_train_with_repeating = self.up_sampling_with_repeating(train)
+            # self.train_model(upsampled_train_with_repeating)
 
             # smote here
+            upsampled_train_with_SMOTE = self.up_sampling_with_SMOTE(train)
+            self.train_model(upsampled_train_with_SMOTE)
 
             result = model.score(test, target_test)
             predicted = model.predict(test)
