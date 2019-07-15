@@ -51,12 +51,12 @@ class EvaluationAlgorithm:
             target_test = test.target
             test = test.drop(['target'], axis=1)
             train = features.iloc[train_index]
-            upsampled_train = EvaluationAlgorithm().up_sampling_with_repeating(train)
-            target_train = upsampled_train.target
-            upsampled_train = upsampled_train.drop(['target'], axis=1)
-            trained_model = model.fit(upsampled_train, target_train)
-            resulttr = accuracy_score(target_train, trained_model.predict(upsampled_train))
-            matrix_train = confusion_matrix(target_train, trained_model.predict(upsampled_train))
+            # upsampled_train = EvaluationAlgorithm().up_sampling_with_repeating(train)
+            target_train = train.target
+            train = train.drop(['target'], axis=1)
+            trained_model = model.fit(train, target_train)
+            resulttr = accuracy_score(target_train, trained_model.predict(train))
+            matrix_train = confusion_matrix(target_train, trained_model.predict(train))
 
             result = model.score(test, target_test)
             predicted = model.predict(test)
@@ -107,10 +107,10 @@ voting = VotingClassifier(estimators)
 # models.append(( ' NB ' , GaussianNB()))
 # models.append(( ' SVM ' , SVC()))
 # models.append(( ' BC ' , baggingClassifier))
-# models.append(( ' RF ' , randomForest))
+models.append(( ' RF ' , randomForest))
 # models.append(( ' ADA ' , adaBoost))
 # models.append(( ' GB' , gradientBoosting))
-models.append(( ' Voting' , voting))
+# models.append(( ' Voting' , voting))
 # models.append(( ' xgboost' , XGBClassifier()))
 # models.append(( ' mlp' , MLPClassifier()))
 results = []
