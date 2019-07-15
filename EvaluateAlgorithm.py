@@ -8,6 +8,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.ensemble import VotingClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import make_scorer
+from sklearn.metrics import accuracy_score
 from sklearn.metrics import classification_report
 from sklearn.metrics import confusion_matrix
 from sklearn.model_selection import StratifiedKFold
@@ -53,11 +54,16 @@ class EvaluationAlgorithm:
             upsampled_train = EvaluationAlgorithm().up_sampling_with_repeating(train)
             target_train = upsampled_train.target
             upsampled_train = upsampled_train.drop(['target'], axis=1)
-            model.fit(upsampled_train, target_train)
+            trained_model = model.fit(upsampled_train, target_train)
+            resulttr = accuracy_score(target_train, trained_model.predict(upsampled_train))
+            matrix_train = confusion_matrix(target_train, trained_model.predict(upsampled_train))
+
             result = model.score(test, target_test)
             predicted = model.predict(test)
             report = classification_report(target_test, predicted)
             matrix = confusion_matrix(target_test, predicted)
+            print(("Accuracy for train: %.3f%%") % (resulttr * 100.0))
+            print(matrix_train)
             print(("Accuracy: %.3f%%") % (result * 100.0))
             print(report)
             print(matrix)
@@ -101,10 +107,10 @@ voting = VotingClassifier(estimators)
 # models.append(( ' NB ' , GaussianNB()))
 # models.append(( ' SVM ' , SVC()))
 # models.append(( ' BC ' , baggingClassifier))
-models.append(( ' RF ' , randomForest))
+# models.append(( ' RF ' , randomForest))
 # models.append(( ' ADA ' , adaBoost))
 # models.append(( ' GB' , gradientBoosting))
-# models.append(( ' Voting' , voting))
+models.append(( ' Voting' , voting))
 # models.append(( ' xgboost' , XGBClassifier()))
 # models.append(( ' mlp' , MLPClassifier()))
 results = []
