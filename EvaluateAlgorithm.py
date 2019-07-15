@@ -44,34 +44,39 @@ class EvaluationAlgorithm:
         upsampled.target.value_counts()
         return upsampled
 
-    def cross_validation_with_up_sampling(self, features):
+    def cross_validation(self, features):
         for train_index, test_index in kfold.split(features, features.target, None):
-            # print("%s %s" % (train_index, test_index))
             test = features.iloc[test_index]
             target_test = test.target
             test = test.drop(['target'], axis=1)
             train = features.iloc[train_index]
-            # upsampled_train = EvaluationAlgorithm().up_sampling_with_repeating(train)
-            target_train = train.target
-            train = train.drop(['target'], axis=1)
-            trained_model = model.fit(train, target_train)
-            resulttr = accuracy_score(target_train, trained_model.predict(train))
-            matrix_train = confusion_matrix(target_train, trained_model.predict(train))
+            # self.train_model(train)
+
+            upsampled_train = self.up_sampling_with_repeating(train)
+            self.train_model(upsampled_train)
+
+            # smote here
 
             result = model.score(test, target_test)
             predicted = model.predict(test)
             report = classification_report(target_test, predicted)
             matrix = confusion_matrix(target_test, predicted)
-            print(("Accuracy for train: %.3f%%") % (resulttr * 100.0))
-            print(matrix_train)
             print(("Accuracy: %.3f%%") % (result * 100.0))
             print(report)
             print(matrix)
 
+    def train_model(self, data_train):
+        target_train = data_train.target
+        data_train = data_train.drop(['target'], axis=1)
+        trained_model = model.fit(data_train, target_train)
+        result_train = accuracy_score(target_train, trained_model.predict(data_train))
+        matrix_train = confusion_matrix(target_train, trained_model.predict(data_train))
+        print(("Accuracy for train: %.3f%%") % (result_train * 100.0))
+        print(matrix_train)
+
 
     def down_sample(self):
         features_with_target = pd.concat([features, EvaluationAlgorithm().data['target']], axis=1)
-        features_with_target.target.value_counts()
         major = features_with_target[features_with_target.target == 0]
         minor = features_with_target[features_with_target.target == 1]
         major_downsampled = resample(major,
@@ -79,7 +84,6 @@ class EvaluationAlgorithm:
                                      n_samples=len(minor),  # match number in majority class
                                      random_state=27)
         downsampled = pd.concat([major_downsampled, minor])
-        downsampled.target.value_counts()
         return downsampled
 
 num_folds = 10
@@ -107,10 +111,10 @@ voting = VotingClassifier(estimators)
 # models.append(( ' NB ' , GaussianNB()))
 # models.append(( ' SVM ' , SVC()))
 # models.append(( ' BC ' , baggingClassifier))
-models.append(( ' RF ' , randomForest))
+# models.append(( ' RF ' , randomForest))
 # models.append(( ' ADA ' , adaBoost))
 # models.append(( ' GB' , gradientBoosting))
-# models.append(( ' Voting' , voting))
+models.append(( ' Voting' , voting))
 # models.append(( ' xgboost' , XGBClassifier()))
 # models.append(( ' mlp' , MLPClassifier()))
 results = []
@@ -121,7 +125,7 @@ features = DataPreprocessor().select_features()
 
 for name, model in models:
     kfold = StratifiedKFold(n_splits=num_folds, random_state=seed, shuffle=True)
-    EvaluationAlgorithm().cross_validation_with_up_sampling(features)
+    EvaluationAlgorithm().cross_validation(features)
 
 
 
