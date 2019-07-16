@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 from matplotlib import pyplot
 from imblearn.over_sampling import SMOTE
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
@@ -50,8 +51,11 @@ class EvaluationAlgorithm:
         data_train = data_train.drop(['target'], axis=1)
         sm = SMOTE(random_state=27, ratio=1.0)
         data_train, target_train = sm.fit_sample(data_train, target_train)
-        x = pd.concat([pd.DataFrame(data_train), pd.Series(target_train).to_frame().T])
-        return x
+        target_train = np.matrix(target_train)
+        target_train = target_train.T
+        upsampled_data = np.append(data_train, target_train, axis=1)
+        result = pd.DataFrame(upsampled_data)
+        return result
 
     def cross_validation(self, features):
         for train_index, test_index in kfold.split(features, features.target, None):
