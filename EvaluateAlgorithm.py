@@ -66,10 +66,10 @@ class EvaluationAlgorithm:
             target_test = test.target
             test = test.drop(['target'], axis=1)
             train = features.iloc[train_index]
-            # self.train_model(train)
+            self.train_model(train)
 
-            upsampled_train_with_repeating = self.up_sampling_with_repeating(train)
-            self.train_model(upsampled_train_with_repeating)
+            # upsampled_train_with_repeating = self.up_sampling_with_repeating(train)
+            # self.train_model(upsampled_train_with_repeating)
 
             # smote here
             # upsampled_train_with_SMOTE = self.up_sampling_with_SMOTE(train)
@@ -79,7 +79,7 @@ class EvaluationAlgorithm:
             predicted = model.predict(test)
             report = classification_report(target_test, predicted)
             matrix = confusion_matrix(target_test, predicted)
-            print(("Accuracy: %.3f%%") % (result * 100.0))
+            print(("Accuracy for test: %.3f%%") % (result * 100.0))
             print(report)
             print(matrix)
 
