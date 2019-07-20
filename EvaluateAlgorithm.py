@@ -47,6 +47,7 @@ class EvaluationAlgorithm:
         return upsampled
 
     def up_sampling_with_SMOTE(self, data_train):
+        headers = list(data_train)
         target_train = data_train.target
         data_train = data_train.drop(['target'], axis=1)
         sm = SMOTE(random_state=27, ratio=1.0)
@@ -55,6 +56,8 @@ class EvaluationAlgorithm:
         target_train = target_train.T
         upsampled_data = np.append(data_train, target_train, axis=1)
         result = pd.DataFrame(upsampled_data)
+        # adding headers to new data frame
+        result.columns = headers
         return result
 
     def cross_validation(self, features):
@@ -65,12 +68,12 @@ class EvaluationAlgorithm:
             train = features.iloc[train_index]
             # self.train_model(train)
 
-            # upsampled_train_with_repeating = self.up_sampling_with_repeating(train)
-            # self.train_model(upsampled_train_with_repeating)
+            upsampled_train_with_repeating = self.up_sampling_with_repeating(train)
+            self.train_model(upsampled_train_with_repeating)
 
             # smote here
-            upsampled_train_with_SMOTE = self.up_sampling_with_SMOTE(train)
-            self.train_model(upsampled_train_with_SMOTE)
+            # upsampled_train_with_SMOTE = self.up_sampling_with_SMOTE(train)
+            # self.train_model(upsampled_train_with_SMOTE)
 
             result = model.score(test, target_test)
             predicted = model.predict(test)
@@ -124,12 +127,12 @@ voting = VotingClassifier(estimators)
 # models.append(( ' KNN ' , KNeighborsClassifier()))
 # models.append(( ' CART ' , DecisionTreeClassifier()))
 # models.append(( ' NB ' , GaussianNB()))
-# models.append(( ' SVM ' , SVC()))
+models.append(( ' SVM ' , SVC()))
 # models.append(( ' BC ' , baggingClassifier))
 # models.append(( ' RF ' , randomForest))
 # models.append(( ' ADA ' , adaBoost))
 # models.append(( ' GB' , gradientBoosting))
-models.append(( ' Voting' , voting))
+# models.append(( ' Voting' , voting))
 # models.append(( ' xgboost' , XGBClassifier()))
 # models.append(( ' mlp' , MLPClassifier()))
 results = []
