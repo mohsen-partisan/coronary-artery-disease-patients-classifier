@@ -25,17 +25,13 @@ class DataPreprocessor:
     def standardize(self):
         # move age column position next to another continious columns
         age_column = self.data.pop('Age_On_Admission')
-        x = self.data.pop('D41stLesionPCITreatedwithStentStentdiameter')
-        y = self.data.pop('D41stLesionPCITreatedwithStentStentlenght')
         self.data.insert(2, 'Age_On_Admission', age_column)
-        self.data.insert(3, 'D41stLesionPCITreatedwithStentStentdiameter', x)
-        self.data.insert(4, 'D41stLesionPCITreatedwithStentStentlenght', y)
         self.final_headers = list(self.data)
         array = self.data.values
 
         # standardize continious columns
-        scaler = StandardScaler().fit(array[:, 0:5])
-        array[:, 0:5] = scaler.transform(array[:, 0:5])
+        scaler = StandardScaler().fit(array[:, 0:3])
+        array[:, 0:3] = scaler.transform(array[:, 0:3])
 
         return array
 

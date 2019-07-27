@@ -9,24 +9,18 @@ class MissValueHandler:
     def numerical_imputation(self, data):
         # imputation of numerical columns
         integer_imp = SimpleImputer(missing_values=-1, strategy='mean', fill_value=0, copy=False)
-        data[['D41stLesionPCITreatedwithStentStentdiameter', 'LABDATA1LabDataHb',
-              'LABDATA1LabDataCR', 'D41stLesionPCITreatedwithStentStentlenght']] = integer_imp.fit_transform(
-            data[['D41stLesionPCITreatedwithStentStentdiameter', 'LABDATA1LabDataHb',
-                  'LABDATA1LabDataCR', 'D41stLesionPCITreatedwithStentStentlenght']])
+        data[['LABDATA1LabDataCR']] = integer_imp.fit_transform(
+            data[['LABDATA1LabDataCR']])
         return  data
 
     def categorical_imputation(self, data):
         # imputation of some of categorical columns with 'most frequent' method
-        data[['PMH1PastMedicalHistrySuccessfulCPR', 'CADRF1CADRFOpium',
+        data[['PMH1PastMedicalHistrySuccessfulCPR',
               'GC1GeneralCharacteristicsEducation', 'GC1GeneralCharacteristicsOccupation',
-              'ECG1ECGPVC', 'GC1GeneralCharacteristicsMaritalStatus',
-              'PMH1PastMedicalHistryCardiomyopathy', 'PMH1PastMedicalHistryChronicLungDisease',
-              'PMH1PastMedicalHistryDialysis']] = self.categorical_imp.fit_transform(
-            data[['PMH1PastMedicalHistrySuccessfulCPR', 'CADRF1CADRFOpium',
+              'GC1GeneralCharacteristicsMaritalStatus']] = self.categorical_imp.fit_transform(
+            data[['PMH1PastMedicalHistrySuccessfulCPR',
                   'GC1GeneralCharacteristicsEducation', 'GC1GeneralCharacteristicsOccupation',
-                  'ECG1ECGPVC', 'GC1GeneralCharacteristicsMaritalStatus',
-                  'PMH1PastMedicalHistryCardiomyopathy', 'PMH1PastMedicalHistryChronicLungDisease',
-                  'PMH1PastMedicalHistryDialysis']])
+                  'GC1GeneralCharacteristicsMaritalStatus']])
         return data
 
     # a custom method for handle miss in two dependent columns
