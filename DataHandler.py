@@ -2,6 +2,8 @@
 import pandas as pd
 import numpy as np
 from MissValueHandler import MissValueHandler
+from matplotlib import pyplot as plt
+import matplotlib as mpl
 from Util import Util
 filename = '/home/mohsen/payanname/resources/modifiedDatePrimaryPCI.csv'
 data = pd.read_csv(filename, sep=';')
@@ -74,14 +76,31 @@ data = data.drop(['AdmissionPainOnsetDate', 'DemographicsDemographicsDateofDisch
 
 # one method to encode categorical values
 data = Util().categorical_encoder(data)
-# creating two classes in target according to problem requirement
-data.loc[data['target'] < 4, 'target'] = 0
-data.loc[data['target'] == 4, 'target'] = 1
-data.loc[data['target'] == 5, 'target'] = 1
-data.loc[data['target'] >= 6, 'target'] = 2
 
-# data.loc[data['target'] < 6, 'target'] = 0
-# data.loc[data['target'] >= 6, 'target'] = 1
+
+fig = plt.figure(figsize = (6, 4))
+title = fig.suptitle("Days Frequency", fontsize=14)
+fig.subplots_adjust(top=0.85, wspace=0.3)
+
+ax = fig.add_subplot(1,1, 1)
+ax.set_xlabel("Quality")
+ax.set_ylabel("Frequency")
+data.shape
+w_q = data['target'].value_counts()
+w_q = (list(w_q.index), list(w_q.values))
+ax.tick_params(axis='both', which='major', labelsize=8.5)
+bar = ax.bar(w_q[0], w_q[1], color='steelblue')
+plt.show()
+
+
+# creating two classes in target according to problem requirement
+# data.loc[data['target'] < 4, 'target'] = 0
+# data.loc[data['target'] == 4, 'target'] = 1
+# data.loc[data['target'] == 5, 'target'] = 1
+# data.loc[data['target'] >= 6, 'target'] = 2
+
+data.loc[data['target'] < 6,'target'] = 0
+data.loc[data['target'] >= 6,'target'] = 1
 
 value_counts = data['target'].value_counts()
 # move target to last column
