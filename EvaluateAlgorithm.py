@@ -9,6 +9,7 @@ from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.ensemble import VotingClassifier
 from sklearn.linear_model import LogisticRegression
+from sklearn.svm import SVC
 from sklearn.metrics import make_scorer
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import classification_report
@@ -19,7 +20,7 @@ from sklearn.model_selection import cross_val_score
 from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.neural_network import MLPClassifier
-from sklearn.svm import SVC
+
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.utils import resample
 from xgboost import XGBClassifier
@@ -32,7 +33,7 @@ from Util import Util
 class EvaluationAlgorithm:
 
     def __init__(self):
-        self.data = getData()
+        # self.data = getData()
         self.final_headers = []
 
     def up_sampling_with_repeating(self, data_train):
@@ -66,6 +67,8 @@ class EvaluationAlgorithm:
             target_test = test.target
             test = test.drop(['target'], axis=1)
             train = features.iloc[train_index]
+
+            # normal train data
             self.train_model(train)
 
             # upsampled_train_with_repeating = self.up_sampling_with_repeating(train)
@@ -127,9 +130,9 @@ voting = VotingClassifier(estimators)
 # models.append(( ' KNN ' , KNeighborsClassifier()))
 # models.append(( ' CART ' , DecisionTreeClassifier()))
 # models.append(( ' NB ' , GaussianNB()))
-models.append(( ' SVM ' , SVC()))
+# models.append(( ' SVM ' , SVC()))
 # models.append(( ' BC ' , baggingClassifier))
-# models.append(( ' RF ' , randomForest))
+models.append(( ' RF ' , randomForest))
 # models.append(( ' ADA ' , adaBoost))
 # models.append(( ' GB' , gradientBoosting))
 # models.append(( ' Voting' , voting))

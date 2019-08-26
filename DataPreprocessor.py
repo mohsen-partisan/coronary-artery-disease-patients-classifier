@@ -23,16 +23,12 @@ class DataPreprocessor:
 
 
     def standardize(self):
-        # move age column position next to another continious columns
-        age_column = self.data.pop('Age_On_Admission')
-        self.data.insert(2, 'Age_On_Admission', age_column)
-        self.final_headers = list(self.data)
         array = self.data.values
 
-        # standardize continious columns
+        # standardize continuous columns
         scaler = StandardScaler().fit(array[:, 0:3])
         array[:, 0:3] = scaler.transform(array[:, 0:3])
-
+        array.shape
         return array
 
     # feature selection
@@ -46,6 +42,4 @@ class DataPreprocessor:
         features_with_target = pd.concat([selected_features_by_xgboost, self.data['target']], axis=1)
         return features_with_target
 
-        # select features using selectKBest
-        # selected_features_by_kbest = feature_selection.selected_features_by_selectKBest(self.data.values)
-        # return selected_features_by_kbest
+        # selected_features = feature_selection.selected_features_by_selectKBest(self.data.values)

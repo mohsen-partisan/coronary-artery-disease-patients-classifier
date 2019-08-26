@@ -1,18 +1,25 @@
 
 import pandas as pd
+import collections
 from jdatetime import date
 import sklearn.preprocessing as preprocessing
 from sklearn.metrics import classification_report, accuracy_score, make_scorer, confusion_matrix
 class Util:
 
      def selected_features_for_xgboost(self, features):
-        non_zero = []
-        i=0
-        for item in features:
-            if item !=0:
-                non_zero.append(features.index(item))
-                i = i+1
-        return non_zero
+         d = dict((item, features.index(item)) for item in features)
+         od = collections.OrderedDict(sorted(d.items(), reverse=True))
+         values = []
+         for k, v in od.items():
+             values.append(v)
+         return values[0:10]
+        # non_zero = []
+        # i=0
+        # for item in features:
+        #     if item !=0:
+        #         non_zero.append(features.index(item))
+        #         i = i+1
+        # return non_zero
 
      def compute_hospitalization_length(self, data):
          in_date = 0

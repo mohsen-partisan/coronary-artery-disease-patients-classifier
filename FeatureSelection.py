@@ -17,14 +17,14 @@ class FeatureSelection:
         features = data[:, 0:(data.shape[1] - 1)]
         target = data[:, (data.shape[1] - 1)]
 
-        best_features = SelectKBest(score_func=chi2, k=20)
+        best_features = SelectKBest(score_func=chi2, k=5)
         fitted_best_features = best_features.fit(features, target)
         numpy.set_printoptions(precision=3)
         print(fitted_best_features.scores_)
         selected_features = fitted_best_features.transform(features)
         return selected_features
 
-    def selected_features_by_recursice_feature_elimination(self, data):
+    def selected_features_by_recursive_feature_elimination(self, data):
         features = data[:, 0:(data.shape[1] - 1)]
         target = data[:, (data.shape[1] - 1)]
 
