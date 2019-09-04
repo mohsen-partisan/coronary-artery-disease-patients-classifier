@@ -29,7 +29,11 @@ data = data.drop(['Patientid', 'encounterid', 'AdmissionAdmissionProfileNumber',
                   'D41stLesionPCI1stLesionPCIACCAHAType', 'D41stLesionPCITreatedwithStentStentdiameter',
                   'D41stLesionPCITreatedwithStentStentlenght', 'OtherDataResultsresult',
                   'CathLabDataCathLabDataInitialTIMI', 'CathLabDataCathLabDataFinalTIMI', 'MACE', 'AdmissionPainOnsetDate',
-                  'DemographicsDemographicsDateofDischarge'
+                  'DemographicsDemographicsDateofDischarge', 'CathLabDataIRALAD', 'CathLabDataIRALCX', 'CathLabDataIRARCA',
+                  'CathLabDataIRAGraft', 'CathLabDataIRADiagonal', 'CathLabDataIRARamus', 'CathLabDataIRAOM', 'CathLabDataIRAPDA',
+                  'CathLabDataIRAPLB', 'AdditionalTreatmentAdditionalTreatmentInotropes', 'AdditionalTreatmentAdditionalTreatmentCardioversionDefibril',
+                  'AdditionalTreatmentAdditionalTreatmentExternlPacemaker', 'AdditionalTreatmentAdditionalTreatmentCPR',
+                  'PMH1PastMedicalHistryCardiomyopathy', 'PMH1PastMedicalHistryDialysis', 'PMH1PastMedicalHistryPeripheralVascularDisease'
                   ], axis=1)
 
 
@@ -61,7 +65,7 @@ data = miss_value_handler.numerical_imputation(data)
 data = miss_value_handler.categorical_imputation(data)
 
 # one method to encode categorical values
-# data = pd.get_dummies(data, prefix_sep='_')
+# data = pd.get_dummies(data)
 # one method to encode categorical values
 data = Util().categorical_encoder(data)
 
@@ -80,7 +84,8 @@ bar = ax.bar(w_q[0], w_q[1], color='steelblue')
 plt.show()
 
 
-# creating three data['target'] < 4, 'target'] = 0
+# creating three
+# data.loc[data['target'] < 4, 'target'] = 0
 # data.loc[data['target'] == 4, 'target'] = 1
 # data.loc[data['target'] == 5, 'target'] = 1
 # data.loc[data['target'] >= 6, 'target'] = 2
@@ -88,11 +93,14 @@ plt.show()
 data.loc[data['target'] < 6,'target'] = 0
 data.loc[data['target'] >= 6,'target'] = 1
 
+# move target to last column
+data = data[[c for c in data if c not in ['target']] + ['target']]
+
 value_counts = data['target'].value_counts()
+value_counts.sort_index()
 
 
 # Correlation().calculate_correaltion(data)
-data.dtypes
 print(data.shape)
 # return data to apply featureSelection
 def getData():

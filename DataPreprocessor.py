@@ -1,5 +1,6 @@
 
 from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import normalize
 from sklearn.model_selection import train_test_split
 from FeatureSelection import FeatureSelection
 from Util import Util
@@ -28,8 +29,14 @@ class DataPreprocessor:
         # standardize continuous columns
         scaler = StandardScaler().fit(array[:, 0:3])
         array[:, 0:3] = scaler.transform(array[:, 0:3])
-        array.shape
         return array
+
+    def normalize(self):
+        array = self.data.values
+        # normalize continuous columns
+        array[:, 0:3] = normalize(array[:, 0:3])
+        return array
+
 
     # feature selection
     def select_features(self):
@@ -42,4 +49,11 @@ class DataPreprocessor:
         features_with_target = pd.concat([selected_features_by_xgboost, self.data['target']], axis=1)
         return features_with_target
 
-        # selected_features = feature_selection.selected_features_by_selectKBest(self.data.values)
+        # selected_features = feature_selection.selected_features_by_selectKBest(self.normalize())
+        # features_with_target = pd.concat([pd.DataFrame(data=selected_features), self.data['target']], axis=1)
+        # return features_with_target
+
+    def select_all_features(self):
+        array = self.standardize()
+        column_names = list(self.data)
+        return pd.DataFrame(array,columns=column_names)

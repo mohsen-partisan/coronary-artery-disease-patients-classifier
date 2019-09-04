@@ -12,7 +12,7 @@ class Util:
          values = []
          for k, v in od.items():
              values.append(v)
-         return values[0:10]
+         return values[:]
         # non_zero = []
         # i=0
         # for item in features:

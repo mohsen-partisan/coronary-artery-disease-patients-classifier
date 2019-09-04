@@ -9,6 +9,8 @@ from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.ensemble import VotingClassifier
 from sklearn.linear_model import LogisticRegression
+from sklearn.linear_model import Lasso
+from sklearn.linear_model import RidgeClassifier
 from sklearn.svm import SVC
 from sklearn.metrics import make_scorer
 from sklearn.metrics import accuracy_score
@@ -125,19 +127,20 @@ estimators.append(('cart', DecisionTreeClassifier()))
 estimators.append(('svm', SVC()))
 estimators.append(('logistic', LogisticRegression()))
 voting = VotingClassifier(estimators)
-# models.append(( ' LR ' , LogisticRegression()))
+models.append(( ' LR ' , LogisticRegression(class_weight='balanced')))
 # models.append(( ' LDA ' , LinearDiscriminantAnalysis()))
 # models.append(( ' KNN ' , KNeighborsClassifier()))
 # models.append(( ' CART ' , DecisionTreeClassifier()))
 # models.append(( ' NB ' , GaussianNB()))
 # models.append(( ' SVM ' , SVC()))
 # models.append(( ' BC ' , baggingClassifier))
-models.append(( ' RF ' , randomForest))
+# models.append(( ' RF ' , randomForest))
 # models.append(( ' ADA ' , adaBoost))
 # models.append(( ' GB' , gradientBoosting))
 # models.append(( ' Voting' , voting))
 # models.append(( ' xgboost' , XGBClassifier()))
 # models.append(( ' mlp' , MLPClassifier()))
+# models.append(( ' Ridge' , RidgeClassifier(class_weight='balanced')))
 results = []
 names = []
 
