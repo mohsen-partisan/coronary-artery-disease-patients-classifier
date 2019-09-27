@@ -30,6 +30,7 @@ from xgboost import XGBClassifier
 from DataHandler import getData
 from DataPreprocessor import DataPreprocessor
 from Util import Util
+from MeanClassFinder import MeanClassFinder
 
 
 class EvaluationAlgorithm:
@@ -64,6 +65,8 @@ class EvaluationAlgorithm:
         return result
 
     def cross_validation(self, features):
+        test_acc = []
+        train_acc = []
         for train_index, test_index in kfold.split(features, features.target, None):
             test = features.iloc[test_index]
             target_test = test.target
@@ -84,9 +87,14 @@ class EvaluationAlgorithm:
             predicted = model.predict(test)
             report = classification_report(target_test, predicted)
             matrix = confusion_matrix(target_test, predicted)
+            test_acc.append(result * 100)
             print(("Accuracy for test: %.3f%%") % (result * 100.0))
             print(report)
             print(matrix)
+        sum_acc_test = 0
+        for item in test_acc:
+            sum_acc_test = sum_acc_test + item
+        print(("mean_accuracy for test: %.3f%%") % (sum_acc_test / len(test_acc)))
 
     def train_model(self, data_train):
         target_train = data_train.target
@@ -125,14 +133,19 @@ gradientBoosting = GradientBoostingClassifier(n_estimators=num_trees, random_sta
 estimators = []
 estimators.append(('cart', DecisionTreeClassifier()))
 estimators.append(('svm', SVC()))
-estimators.append(('logistic', LogisticRegression()))
+# estimators.append(('GB', GradientBoostingClassifier()))
+estimators.append(('BC', BaggingClassifier()))
+# estimators.append(('RF', RandomForestClassifier()))
+# estimators.append(('KNN', KNeighborsClassifier()))
+# estimators.append(('XG', XGBClassifier()))
+
 voting = VotingClassifier(estimators)
-models.append(( ' LR ' , LogisticRegression(class_weight='balanced')))
+# models.append(( ' LR ' , LogisticRegression()))
 # models.append(( ' LDA ' , LinearDiscriminantAnalysis()))
 # models.append(( ' KNN ' , KNeighborsClassifier()))
 # models.append(( ' CART ' , DecisionTreeClassifier()))
 # models.append(( ' NB ' , GaussianNB()))
-# models.append(( ' SVM ' , SVC()))
+models.append(( ' SVM ' , SVC()))
 # models.append(( ' BC ' , baggingClassifier))
 # models.append(( ' RF ' , randomForest))
 # models.append(( ' ADA ' , adaBoost))
@@ -145,7 +158,12 @@ results = []
 names = []
 
 # complete data
-features = DataPreprocessor().select_features()
+features = MeanClassFinder().find_instances_near_each_class_centroid()
+features = features.sample(frac=1)
+# dist = Util().distance_matrix(DataPreprocessor().select_all_features())
+a=0
+
+
 
 for name, model in models:
     kfold = StratifiedKFold(n_splits=num_folds, random_state=seed, shuffle=True)

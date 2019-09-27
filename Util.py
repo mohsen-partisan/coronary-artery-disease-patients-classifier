@@ -3,6 +3,7 @@ import pandas as pd
 import collections
 from jdatetime import date
 import sklearn.preprocessing as preprocessing
+from scipy.spatial import distance_matrix
 from sklearn.metrics import classification_report, accuracy_score, make_scorer, confusion_matrix
 class Util:
 
@@ -51,3 +52,12 @@ class Util:
          print(confusion_matrix(target_test, predictions, labels=[0, 1]))
          print(accuracy_score(target_test, predictions))
          return accuracy_score(target_test, predictions)  # return accuracy score
+
+     def distance_matrix(self, data):
+        sorted_data = data.sort_values('target')
+        target = sorted_data.target
+        sorted_data = sorted_data.drop(['target'], axis=1)
+        distance_mat = pd.DataFrame(distance_matrix(sorted_data.values, sorted_data.values), index=sorted_data.index,
+                                    columns=sorted_data.index)
+        distance_mat['target'] = target
+        return distance_mat

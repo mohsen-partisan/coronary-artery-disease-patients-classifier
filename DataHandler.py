@@ -70,18 +70,18 @@ data = miss_value_handler.categorical_imputation(data)
 data = Util().categorical_encoder(data)
 
 # showing distribution of hospitalization days
-fig = plt.figure(figsize = (6, 4))
-title = fig.suptitle("Days Frequency", fontsize=14)
-fig.subplots_adjust(top=0.85, wspace=0.3)
-
-ax = fig.add_subplot(1,1, 1)
-ax.set_xlabel("Quality")
-ax.set_ylabel("Frequency")
-w_q = data['target'].value_counts()
-w_q = (list(w_q.index), list(w_q.values))
-ax.tick_params(axis='both', which='major', labelsize=8.5)
-bar = ax.bar(w_q[0], w_q[1], color='steelblue')
-plt.show()
+# fig = plt.figure(figsize = (6, 4))
+# title = fig.suptitle("Days Frequency", fontsize=14)
+# fig.subplots_adjust(top=0.85, wspace=0.3)
+#
+# ax = fig.add_subplot(1,1, 1)
+# ax.set_xlabel("Quality")
+# ax.set_ylabel("Frequency")
+# w_q = data['target'].value_counts()
+# w_q = (list(w_q.index), list(w_q.values))
+# ax.tick_params(axis='both', which='major', labelsize=8.5)
+# bar = ax.bar(w_q[0], w_q[1], color='steelblue')
+# plt.show()
 
 
 # creating three
@@ -90,18 +90,19 @@ plt.show()
 # data.loc[data['target'] == 5, 'target'] = 1
 # data.loc[data['target'] >= 6, 'target'] = 2
 
-data.loc[data['target'] < 6,'target'] = 0
-data.loc[data['target'] >= 6,'target'] = 1
+data.loc[data['target'] < 5,'target'] = 0
+data.loc[data['target'] >= 5,'target'] = 1
 
 # move target to last column
 data = data[[c for c in data if c not in ['target']] + ['target']]
 
 value_counts = data['target'].value_counts()
-value_counts.sort_index()
+# value_counts.sort_index()
 
 
 # Correlation().calculate_correaltion(data)
 print(data.shape)
+print(value_counts.sort_index())
 # return data to apply featureSelection
 def getData():
     return data
