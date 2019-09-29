@@ -64,13 +64,19 @@ class EvaluationAlgorithm:
         result.columns = headers
         return result
 
-    def cross_validation(self, features):
+    def cross_validation(self, features, features_not_near_centroids):
         test_acc = []
         train_acc = []
+        ##################
+        target_not_near_centroids = features_not_near_centroids.target
+        features_not_near_centroids = features_not_near_centroids.drop(['target'], axis=1)
+        ##################
         for train_index, test_index in kfold.split(features, features.target, None):
             test = features.iloc[test_index]
             target_test = test.target
             test = test.drop(['target'], axis=1)
+
+
             train = features.iloc[train_index]
 
             # normal train data
@@ -84,11 +90,19 @@ class EvaluationAlgorithm:
             # self.train_model(upsampled_train_with_SMOTE)
 
             result = model.score(test, target_test)
+
+            ###########
+            result_not_centroids = model.score(features_not_near_centroids, target_not_near_centroids)
+            ###########
+
             predicted = model.predict(test)
             report = classification_report(target_test, predicted)
             matrix = confusion_matrix(target_test, predicted)
             test_acc.append(result * 100)
             print(("Accuracy for test: %.3f%%") % (result * 100.0))
+            ###################
+            print(("Accuracy for test_not_near_centroids: %.3f%%") % (result_not_centroids * 100.0))
+            ###################
             print(report)
             print(matrix)
         sum_acc_test = 0
@@ -158,8 +172,9 @@ results = []
 names = []
 
 # complete data
-features = MeanClassFinder().find_instances_near_each_class_centroid()
+features, features_not_near_centroids = MeanClassFinder().find_instances_near_each_class_centroid()
 features = features.sample(frac=1)
+features_not_near_centroids = features_not_near_centroids.sample(frac=1)
 # dist = Util().distance_matrix(DataPreprocessor().select_all_features())
 a=0
 
@@ -167,7 +182,7 @@ a=0
 
 for name, model in models:
     kfold = StratifiedKFold(n_splits=num_folds, random_state=seed, shuffle=True)
-    EvaluationAlgorithm().cross_validation(features)
+    EvaluationAlgorithm().cross_validation(features, features_not_near_centroids)
 
 
 

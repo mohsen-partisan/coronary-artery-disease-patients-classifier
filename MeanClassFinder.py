@@ -44,9 +44,13 @@ class MeanClassFinder:
 
         new_data_class_0 = data.ix[nearest_to_centroid_class_0]
         new_data_class_1 = data.ix[nearest_to_centroid_class_1]
-        new_data = pd.concat([new_data_class_0, new_data_class_1])
+        new_data_centroids = pd.concat([new_data_class_0, new_data_class_1])
 
-        return new_data
+        nearest_to_centroids = np.concatenate([nearest_to_centroid_class_0, nearest_to_centroid_class_1])
+        not_near_to_centroids = set(data.index) - set(nearest_to_centroids)
+        new_data_not_centroids = data.ix[not_near_to_centroids]
+
+        return new_data_centroids, new_data_not_centroids
 
         s=0
         #########
