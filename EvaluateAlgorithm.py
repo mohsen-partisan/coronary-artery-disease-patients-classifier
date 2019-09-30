@@ -154,7 +154,7 @@ estimators.append(('BC', BaggingClassifier()))
 # estimators.append(('XG', XGBClassifier()))
 
 voting = VotingClassifier(estimators)
-# models.append(( ' LR ' , LogisticRegression()))
+# models.append(( ' LR ' , LogisticRegression(class_weight='balanced')))
 # models.append(( ' LDA ' , LinearDiscriminantAnalysis()))
 # models.append(( ' KNN ' , KNeighborsClassifier()))
 # models.append(( ' CART ' , DecisionTreeClassifier()))
@@ -172,9 +172,9 @@ results = []
 names = []
 
 # complete data
-features, features_not_near_centroids = MeanClassFinder().find_instances_near_each_class_centroid()
-features = features.sample(frac=1)
-features_not_near_centroids = features_not_near_centroids.sample(frac=1)
+useful_data, remain_data = MeanClassFinder().find_instances_near_two_class_centroid()
+useful_data = useful_data.sample(frac=1)
+remain_data = remain_data.sample(frac=1)
 # dist = Util().distance_matrix(DataPreprocessor().select_all_features())
 a=0
 
@@ -182,7 +182,7 @@ a=0
 
 for name, model in models:
     kfold = StratifiedKFold(n_splits=num_folds, random_state=seed, shuffle=True)
-    EvaluationAlgorithm().cross_validation(features, features_not_near_centroids)
+    EvaluationAlgorithm().cross_validation(useful_data, remain_data)
 
 
 
