@@ -9,7 +9,7 @@ import numpy as np
 class MeanClassFinder:
 
     def find_instances_near_two_class_centroid(self):
-        data = DataPreprocessor().select_features()
+        data = DataPreprocessor().select_all_features()
         # data = data.drop(['target'], axis=1)
 
         mean_class_0 = data.loc[data['target'] == 0].mean()
@@ -44,11 +44,11 @@ class MeanClassFinder:
         not_near_to_centroid_1 = set(class_1.index) - set(nearest_to_centroid_class_1)
 
 
-        new_data_class_0 = data.ix[nearest_to_centroid_class_0]
-        new_data_class_1 = data.ix[not_near_to_centroid_1]
+        new_data_class_0 = data.ix[not_near_to_centroid_0]
+        new_data_class_1 = data.ix[nearest_to_centroid_class_1]
         useful_data = pd.concat([new_data_class_0, new_data_class_1])
 
-        useful_data_index = np.concatenate([nearest_to_centroid_class_0, np.array(list(not_near_to_centroid_1))])
+        useful_data_index = np.concatenate([np.array(list(not_near_to_centroid_0)), nearest_to_centroid_class_1 ])
         remain_data_index = set(data.index) - set(useful_data_index)
         remain_data = data.ix[remain_data_index]
 

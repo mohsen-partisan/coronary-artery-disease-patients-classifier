@@ -17,7 +17,7 @@ class FeatureSelection:
         features = data[:, 0:(data.shape[1] - 1)]
         target = data[:, (data.shape[1] - 1)]
 
-        best_features = SelectKBest(score_func=chi2, k=5)
+        best_features = SelectKBest(score_func=chi2, k=10)
         fitted_best_features = best_features.fit(features, target)
         numpy.set_printoptions(precision=3)
         print(fitted_best_features.scores_)

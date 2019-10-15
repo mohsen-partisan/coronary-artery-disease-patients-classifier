@@ -43,7 +43,7 @@ class DataPreprocessor:
         feature_selection = FeatureSelection()
 
         # select features using xgboost
-        selected_features = feature_selection.selected_features_by_xgboost(self.standardize())
+        selected_features = feature_selection.selected_features_by_xgboost(self.normalize())
         selected_features_index = Util().selected_features_for_xgboost(selected_features)
         selected_features_by_xgboost = self.data.ix[:, selected_features_index]
         features_with_target = pd.concat([selected_features_by_xgboost, self.data['target']], axis=1)

@@ -17,7 +17,7 @@ data = data[data.columns[0:64]]
 data['target'] = np.nan
 # a method for creating target values from differentiate between admission date and discharge date
 data = Util().compute_hospitalization_length(data)
-
+print(data.shape)
 # removing redundant columns
 data = data.drop(['Patientid', 'encounterid', 'AdmissionAdmissionProfileNumber',
                   'PrimaryLast','نامبيمار', 'main',
@@ -90,8 +90,8 @@ data = Util().categorical_encoder(data)
 # data.loc[data['target'] == 5, 'target'] = 1
 # data.loc[data['target'] >= 6, 'target'] = 2
 
-data.loc[data['target'] < 5,'target'] = 0
-data.loc[data['target'] >= 5,'target'] = 1
+data.loc[data['target'] < 6,'target'] = 0
+data.loc[data['target'] >= 6,'target'] = 1
 
 # move target to last column
 data = data[[c for c in data if c not in ['target']] + ['target']]
