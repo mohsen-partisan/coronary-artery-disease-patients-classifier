@@ -35,8 +35,9 @@ class Clustering:
     def cluster_data_before_classify(self, data):
         model = kprototypes.KPrototypes(n_clusters=8)
         cluster_data = data.drop(['target'], axis=1)
-        categoricals = [i for i in range(3,len(cluster_data.columns))]
+        categoricals = [i for i in range(3, len(cluster_data.columns))]
 
+        # visualizer for find best cluster number
         # visualizer = KElbowVisualizer(model, k=(2, 8), metric='silhouette', timings=False)
         # # Fit the data and visualize
         # visualizer.fit(data)
@@ -48,14 +49,10 @@ class Clustering:
         dict(zip(unique, counts))
 
         indices = [np.where(model.labels_ == i)[0] for i in range(model.n_clusters)]
-        tt = self.data.ix[indices[0]]
-        bb = self.data.ix[indices[1]]
         for i in range(model.n_clusters):
             random.shuffle(indices[i])
         self.merge_train_test_data_from_each_cluster(indices)
 
-
-        a = 0
 
     def merge_train_test_data_from_each_cluster(self, indices):
         for i in range(len(indices)):

@@ -14,13 +14,6 @@ class Util:
          for k, v in od.items():
              values.append(v)
          return values[:]
-        # non_zero = []
-        # i=0
-        # for item in features:
-        #     if item !=0:
-        #         non_zero.append(features.index(item))
-        #         i = i+1
-        # return non_zero
 
      def compute_hospitalization_length(self, data):
          in_date = 0

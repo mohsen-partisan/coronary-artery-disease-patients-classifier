@@ -29,13 +29,13 @@ class MissValueHandler:
         fin_timi_nan = data['CathLabDataCathLabDataFinalTIMI'].isnull()
         count = 0
         sum_timi = 0
-        a = 0
-        b = 0
+        first_value = 0
+        second_value = 0
         for i in range(0, (data.shape[0])):
             if not int_timi_nan[i] and not fin_timi_nan[i]:
-                a = int(data.iloc[i]['CathLabDataCathLabDataFinalTIMI'])
-                b = int(data.iloc[i]['CathLabDataCathLabDataInitialTIMI'])
-                sum_timi += a - b
+                first_value = int(data.iloc[i]['CathLabDataCathLabDataFinalTIMI'])
+                second_value = int(data.iloc[i]['CathLabDataCathLabDataInitialTIMI'])
+                sum_timi += first_value - second_value
                 count += 1
         avg = sum_timi / count
 

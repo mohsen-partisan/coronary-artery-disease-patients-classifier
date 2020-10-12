@@ -8,7 +8,7 @@ from  Correlation import Correlation
 from Util import Util
 
 
-filename = '/home/mohsen/payanname/resources/modifiedDatePrimaryPCI.csv'
+filename = ''
 data = pd.read_csv(filename, sep=';')
 # just needed columns
 data = data[data.columns[0:64]]

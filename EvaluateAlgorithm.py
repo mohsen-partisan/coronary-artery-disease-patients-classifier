@@ -185,7 +185,3 @@ for name, model in models:
     EvaluationAlgorithm().cross_validation(useful_data, remain_data)
 
 
-
-
-
-a = 1
